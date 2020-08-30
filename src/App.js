@@ -15,19 +15,7 @@ function App() {
           // console.log(countries)
           setCountries(countries)
         })
-
-
     }
-
-    // const getCountriesAndIso = fetch('https://disease.sh/v3/covid-19/countries')
-    //   .then(response => response.json())
-    //   .then(data => data.map(({ country, countryInfo: { iso2 } }) => {
-    //     return country, iso2
-    //   }))
-
-
-
-    // setCountries(country)
     getCountriesAndIso()
   }, [])
 
@@ -38,7 +26,7 @@ function App() {
         <FormControl className='app__dropdown'>
 
           <MenuItem value='worldwide'>WORLD WIDE</MenuItem>
-          <Select value='' variant='outline'>
+          <Select value='' variant='outlined'>
             {
               countries.map(countries => <MenuItem key={countries.id} value={countries.values}>{countries.name}</MenuItem>)
             }
