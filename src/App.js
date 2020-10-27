@@ -2,12 +2,16 @@ import React from 'react';
 import { FormControl, Select, MenuItem, Card, CardContent } from '@material-ui/core';
 import InfoBox from './infoBox'
 import Map from './Map'
+import Table from './Table'
+import { sortData } from './util'
+import LineGraph from './LineGraph'
 import './App.css';
 
 function App() {
   const [countries, setCountries] = React.useState([])
   const [country, setCountry] = React.useState('Worldwide')
   const [countryInfo, setCountryInfo] = React.useState({})
+  const [tableData, setTableDate] = React.useState([])
 
   React.useEffect(() => {
     fetch('https://disease.sh/v3/covid-19/all')
@@ -23,6 +27,8 @@ function App() {
         .then(data => {
           const countries = data.map(({ country, countryInfo: { iso2, _id } }) => ({ name: country, value: iso2, id: _id }))
           // console.log(countries)
+          const sortedData = sortData(data)
+          setTableDate(sortedData)
           setCountries(countries)
         })
     }
@@ -50,7 +56,7 @@ function App() {
     <div className="app">
       <div className='app__left'>
         <div className='app__header'>
-          <h1>COVDI-19 TRACKER</h1>
+          <h1>COVID-19 TRACKER</h1>
           <FormControl className='app__dropdown'>
             <Select value={country} variant='outlined' onChange={onCountryChange}>
               <MenuItem value='Worldwide'>Wordwide</MenuItem>
@@ -73,7 +79,9 @@ function App() {
       <Card className='app-right'>
         <CardContent>
           <h3>Live cases by country</h3>
+          <Table countries={tableData} />
           <h3>Worldwide new cases</h3>
+          <LineGraph />
         </CardContent>
       </Card>
 
