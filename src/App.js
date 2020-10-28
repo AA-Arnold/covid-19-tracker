@@ -5,6 +5,7 @@ import Map from './Map'
 import Table from './Table'
 import { sortData } from './util'
 import LineGraph from './LineGraph'
+import "leaflet/dist/leaflet.css"
 import './App.css';
 
 function App() {
@@ -12,6 +13,8 @@ function App() {
   const [country, setCountry] = React.useState('Worldwide')
   const [countryInfo, setCountryInfo] = React.useState({})
   const [tableData, setTableDate] = React.useState([])
+  const [mapCenter, setMapCenter] = React.useState({ lat: 34.80746, lng: -40.4796 })
+  const [mapZoom, setMapZoom] = React.useState(3)
 
   React.useEffect(() => {
     fetch('https://disease.sh/v3/covid-19/all')
@@ -20,7 +23,6 @@ function App() {
   }, [])
 
   React.useEffect(() => {
-
     const getCountriesAndIso = async () => {
       await fetch('https://disease.sh/v3/covid-19/countries')
         .then(response => response.json())
@@ -45,12 +47,18 @@ function App() {
     const url = countryCode === 'Worldwide' ? 'https://disease.sh/v3/covid-19/all' : `https://disease.sh/v3/covid-19/countries/${countryCode}`
     await fetch(url)
       .then(response => response.json())
-      .then(data => { setCountry(countryCode); setCountryInfo(data) })
+      .then(data => {
+        setCountry(countryCode);
+        setCountryInfo(data);
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long])
+        setMapZoom(4)
+      })
 
 
   }
 
   console.log(countryInfo)
+  console.log('lat and log', mapCenter)
   return (
 
     <div className="app">
@@ -73,7 +81,7 @@ function App() {
           <InfoBox title='Recover' cases={countryInfo.todayRecovered} total={countryInfo.recovered} />
           <InfoBox title='Deaths' cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
         </div>
-        <Map />
+        <Map center={mapCenter} zoom={mapZoom} />
       </div>
 
       <Card className='app-right'>
